@@ -21,6 +21,12 @@ var _ = {};
 *   _.identity({a: "b"}) === {a: "b"}
 */
 
+ _.identity = function(value){
+    return value;
+}
+
+
+
 
 /** _.typeOf
 * Arguments:
@@ -42,6 +48,20 @@ var _ = {};
 * _.typeOf([1,2,3]) -> "array"
 */
 
+// if else statement for the collections
+
+_.typeOf = function(value){
+    if(Array.isArray(value)){
+        return "array";
+    } else if (value === null){
+        return "null";
+    } else {
+        return typeof value;
+    }
+}
+
+
+
 
 /** _.first
 * Arguments:
@@ -62,6 +82,19 @@ var _ = {};
 */
 
 
+_.first = function(array, number){
+    if(!Array.isArray(array) || number < 0){
+      return [];
+    } else if (number === undefined || number === NaN ){
+      return array[0];
+    } else {
+     // using slice and number to return a certain part of the array
+      return array.slice(0, number);
+      }
+    }
+
+
+
 /** _.last
 * Arguments:
 *   1) An array
@@ -80,6 +113,21 @@ var _ = {};
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
 
+_.last = function(array, number){
+    if(!Array.isArray(array) || number < 0){
+      return [];
+    } else if (number === undefined || number === NaN ){
+      return array[array.length - 1];
+    } else if(number > array.length){
+      return array;
+    } else {
+      return array.slice(-number);
+    }
+  }
+
+
+
+
 
 /** _.indexOf
 * Arguments:
@@ -97,6 +145,18 @@ var _ = {};
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
 
+_.indexOf = function(array, value){
+  for(var i = 0; i < array.length; i++){
+    if(array[i] === value){
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+
+
 
 /** _.contains
 * Arguments:
@@ -112,6 +172,16 @@ var _ = {};
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
+
+_.contains = function(array, value){
+  for(var i = 0; i < array.length; i++){
+    if(array[i] === value){
+      return true;
+    }
+  }
+  return false;
+}
+
 
 
 /** _.each
@@ -130,6 +200,22 @@ var _ = {};
 *      -> should log "a" "b" "c" to the console
 */
 
+_.each = function(collection, func){
+  if(Array.isArray(collection)){
+    // so its saying for each element in the array - so we can use a for loop
+    for(var i = 0; i < collection.length; i++){
+      func(collection[i], i, collection); // function and its argument that runs
+    } 
+  } else if (typeof collection === 'object') {
+      // else if object - for key in since we need to iterate through an object
+      for(var key in collection){
+        func(collection[key], key, collection)
+      }
+    }
+  }
+
+
+
 
 /** _.unique
 * Arguments:
@@ -140,6 +226,21 @@ var _ = {};
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
+
+_.unique = function(array){
+  // return a new array - so we need a storage array 
+  let newArr = [];
+  // loop through the array
+  for(var i = 0; i < array.length; i++){
+    // every iteration push i to the newArr if its not there already 
+    if(array.indexOf(array[i]) === i){
+      newArr.push(array[i]);
+    }
+  }
+  // make sure to return the newArr after the loop ends 
+ return newArr;
+}
+
 
 
 /** _.filter
@@ -158,6 +259,26 @@ var _ = {};
 *   use _.each in your implementation
 */
 
+_.filter = function(array, func){
+  // storage 
+  let result = [];
+  // check if array is an array first 
+  if(Array.isArray(array)){
+    // loop through the array
+    for(var i = 0; i < array.length; i++){
+      // call the function on each index
+      // for true
+      if(func(array[i], i, array)) {
+        // push the value to the storage array
+         result.push(array[i]);
+         }
+       }
+     }
+  return result;
+    }
+
+
+
 
 /** _.reject
 * Arguments:
@@ -171,6 +292,25 @@ var _ = {};
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
+
+_.reject = function(array, func){
+  // return a new array - storage
+  let rejectStorage = [];
+  if(Array.isArray(array)){
+    // loop through the array
+    for(var i = 0; i < array.length; i++){
+      // call the function on each index
+      // for FALSE
+      if(!func(array[i], i, array)) {
+        // push the value to the storage array
+         rejectStorage.push(array[i]);
+         }
+       }
+     }
+  return rejectStorage;
+   }
+
+
 
 
 /** _.partition
@@ -192,6 +332,33 @@ var _ = {};
 }
 */
 
+_.partition = function(array, func){
+  // im thinking three arrays? one for tru, one for false, and then add them together in another array
+  // might be a little extra but thats all i can think of right now
+  let trueArr = [];
+  let falseArr = [];
+  let bothArr = [];
+  // lets check if its an array first 
+  if(Array.isArray(array)){
+    // iterate through it 
+    for(var i = 0; i < array.length; i++){
+      // if else if statement for true and false
+      if(func(array[i], i, array)){
+        trueArr.push(array[i]);
+        // now for false
+      } else if (!func(array[i], i, array)){
+        falseArr.push(array[i]);
+      }
+    }
+  }
+  // outside the code block of the first if statement 
+  bothArr.push(trueArr)
+  bothArr.push(falseArr);
+  return bothArr;
+}
+
+
+
 
 /** _.map
 * Arguments:
@@ -209,6 +376,25 @@ var _ = {};
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
 
+_.map = function(collection, func){
+    const output = [];
+    if(Array.isArray(collection)){
+      for(var i = 0; i < collection.length; i++){
+        // call back function to modify the current index 
+        const result = func(collection[i], i , collection);
+        output.push(result);
+      }  
+    } else if(typeof collection === 'object') {
+      for(var key in collection){
+        const objectResult = func(collection[key], key, collection);
+        output.push(objectResult);
+      }
+    }
+    return output;
+}
+
+
+
 
 /** _.pluck
 * Arguments:
@@ -221,6 +407,14 @@ var _ = {};
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
 
+
+_.pluck = function(array, property){
+  // remember that map takes the object and adds its keys to an array 
+  return _.map(array, function(obj){
+    // returning the objects(key) value
+    return obj[property];
+  });
+  };
 
 /** _.every
 * Arguments:
@@ -243,6 +437,45 @@ var _ = {};
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
 
+_.every = function(collection, func){
+  // checking if collection is an array
+  if(Array.isArray(collection)){
+    // loop
+    for(var i = 0; i < collection.length; i++){
+      // also checking if func is a function
+      if(typeof func === 'function'){
+        // if something is not true in the function
+        if(!func(collection[i], i, collection)) {
+          // return false
+          return false;
+        }
+      } else { 
+        // if not provided - also counts falsey
+        if(!collection[i]){
+          return false;
+        }
+      }
+    }
+  } else {
+    // loop through if its an array
+    for (var key in collection){
+      // again checking if func is a function
+      if(typeof func === 'function'){
+        if(!func(collection[key], key, collection)) {
+          return false;
+        }
+      } else {
+        if(!collection[key]) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+};
+
+
+ 
 
 /** _.some
 * Arguments:
@@ -266,6 +499,47 @@ var _ = {};
 */
 
 
+
+_.some = function(collection, func){
+  // literally the opposite of  _.every 
+  // checking if collection is an array
+  
+  if(Array.isArray(collection)){
+    // loop
+    for(var i = 0; i < collection.length; i++){
+      // also checking if func is a function
+      if(typeof func === 'function'){
+        // if fcuntion runs fully true return true
+        if(func(collection[i], i, collection)) {
+          // return false
+          return true;
+        }
+        } else { 
+        // if  that one index is true also return true
+        if(collection[i]){
+          return true;
+        }
+      }
+     }
+  } else {
+    // loop through if its an array
+    for (var key in collection){
+      // again checking if func is a function
+      if(typeof func === 'function'){
+        // same this as above
+        if(func(collection[key], key, collection)) {
+          return true;
+          }
+      } else {
+        if(collection[key]) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
 /** _.reduce
 * Arguments:
 *   1) An array
@@ -286,6 +560,23 @@ var _ = {};
 */
 
 
+_.reduce = function(array, func, seed){
+  // storage to return later 
+  let output;
+   if(seed === undefined){ // no seed value provided
+    output = array[0]; // starting at the first item of the array
+     for(var i = 1; i < array.length; i++){
+       output = func(output , array[i], i);
+     }
+   } else { // seed value provided
+      output = seed;
+     for(var i = 0; i < array.length ; i++){
+       output = func(output, array[i], i)
+     }
+   }
+  return output;
+}
+
 /** _.extend
 * Arguments:
 *   1) An Object
@@ -300,6 +591,21 @@ var _ = {};
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+_.extend = function(object , ...objects){ // using the spread operator 
+  // we can use the word argument to represent the objects we will pass in the function
+  // loop through those
+  for(var i = 0; i < arguments.length; i++){
+    var copy = arguments[i]; // var copy because we are copying the properties of whatever iteration we are on for the object
+    // now we need a loop through the actual Object itself
+    for(var key in copy){ // notice how we use copy because we are talking about object we are on
+      object[key] = copy[key]; 
+    }
+  }
+  // return the updated object 
+  return object;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
